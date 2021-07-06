@@ -5,6 +5,18 @@ const magasinier = require("../models/magasinier");
 const { validationResult } = require("express-validator");
 
 const jwt = require("jsonwebtoken");
+const generator = require("generate-password");
+
+const nodemailer = require("nodemailer");
+const log = console.log;
+
+let transporter = nodemailer.createTransport({
+  service: "gmail",
+  auth: {
+    user: process.env.EMAIL || "darragino1@gmail.com", // TODO: your gmail account
+    pass: process.env.PASSWORD || "tarajidawla1919", // TODO: your gmail password
+  },
+});
 
 const signup = async (req, res, next) => {
   const error = validationResult(req);
@@ -12,7 +24,11 @@ const signup = async (req, res, next) => {
     return next(new httpError("invalid input passed ", 422));
   }
 
-  const { name, email, password, tel, adresse } = req.body;
+  const { name, email, tel, adresse } = req.body;
+  const password = generator.generate({
+    length: 10,
+    uppercase: false,
+  });
   let existinguser;
   try {
     existinguser = await magasinier.findOne({ email: email });
@@ -32,6 +48,8 @@ const signup = async (req, res, next) => {
     password,
     tel,
     adresse,
+    commandeExterne:[],
+    commandeInterne:[]
   });
 
   try {
@@ -40,6 +58,20 @@ const signup = async (req, res, next) => {
     const error = new httpError("failed signup", 500);
     return next(error);
   }
+
+  let mailOptions = {
+    from: "ismaahenaayaachi@gmail.com", // TODO: email sender
+    to: email, // TODO: email receiver
+    subject: "Confirmation de creation de compte magasinier",
+    text: "Votre Mot de passe est: " + password,
+  };
+
+  transporter.sendMail(mailOptions, (err, data) => {
+    if (err) {
+      return log("Error occurs");
+    }
+    return log("Email sent!!!");
+  });
 
   let token;
   try {
@@ -53,13 +85,11 @@ const signup = async (req, res, next) => {
     return next(error);
   }
 
-  res
-    .status(201)
-    .json({
-      MagasinierId: createduser.id,
-      email: createduser.email,
-      token: token,
-    });
+  res.status(201).json({
+    MagasinierId: createduser.id,
+    email: createduser.email,
+    token: token,
+  });
 };
 
 const login = async (req, res, next) => {
@@ -109,23 +139,25 @@ const updatemagasinier = async (req, res, next) => {
     return next(new httpError("invalid input passed ", 422));
   }
 
-  const { name, email, password, tel, adresse } = req.body;
-  const UserId = req.params.userId;
+  const { name, email, tel, adresse } = req.body;
+  const password = generator.generate({
+    length: 10,
+    uppercase: false,
+  });
+  const id = req.params.id;
   let existingUser;
   try {
-    existingUser = await magasinier.findById(UserId);
+    existingUser = await magasinier.findById(id);
   } catch {
     const error = new httpError("problem", 500);
     return next(error);
   }
 
-
-
   existingUser.name = name;
   existingUser.email = email;
   existingUser.password = password;
-  existingUser.adresse=adresse;
-  existingUser.tel=tel
+  existingUser.adresse = adresse;
+  existingUser.tel = tel;
 
   try {
     existingUser.save();
@@ -133,6 +165,20 @@ const updatemagasinier = async (req, res, next) => {
     const error = new httpError("failed to patch", 500);
     return next(error);
   }
+
+  let mailOptions = {
+    from: "ismaahenaayaachi@gmail.com", // TODO: email sender
+    to: email, // TODO: email receiver
+    subject: "Confirmation de creation de compte magasinier",
+    text: "Votre Mot de passe est: " + password,
+  };
+
+  transporter.sendMail(mailOptions, (err, data) => {
+    if (err) {
+      return log("Error occurs");
+    }
+    return log("Email sent!!!");
+  });
 
   res.status(200).json({ magasinier: existingUser });
 };
@@ -169,11 +215,9 @@ const getmagasinierById = async (req, res, next) => {
   res.json({ existingUserUser: existingUser });
 };
 
-
-
 exports.signup = signup;
 exports.login = login;
 exports.getmagasinier = getmagasinier;
 exports.updatemagasinier = updatemagasinier;
 exports.deletemagasinier = deletemagasinier;
-exports.getmagasinierById=getmagasinierById
+exports.getmagasinierById = getmagasinierById;

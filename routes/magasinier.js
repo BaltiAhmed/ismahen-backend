@@ -16,9 +16,7 @@ check('adresse')
 .not()
 .isEmpty(),
 check('email')
-.normalizeEmail(),
-check('password')
-.isLength({min:8})
+.normalizeEmail()
 , magasinierControllers.signup)
 
 route.post('/login', 
@@ -30,7 +28,7 @@ check('password')
 
 route.get('/',magasinierControllers.getmagasinier)
 
-route.post('/:userId', 
+route.patch('/:id', 
 check('name')
 .not()
 .isEmpty(),
@@ -41,9 +39,7 @@ check('adresse')
 .not()
 .isEmpty(),
 check('email')
-.normalizeEmail(),
-check('password')
-.isLength({min:8})
+.normalizeEmail()
 , magasinierControllers.updatemagasinier)
 
 route.delete('/:id',magasinierControllers.deletemagasinier)

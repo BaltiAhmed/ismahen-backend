@@ -14,7 +14,8 @@ const commandeRoutes = require("./routes/commande");
 
 const commandeExterneRoutes = require("./routes/commandeExterne");
 
-const factureRoutes = require("./routes/facture");
+const produitExterne = require("./routes/produit-externe");
+
 
 const produitRoute = require("./routes/produit");
 
@@ -41,8 +42,8 @@ app.use("/api/fournisseur", fournisseurRoutes);
 app.use("/api/ouvrier", ouvrierRoutes);
 app.use("/api/commande", commandeRoutes);
 app.use("/api/produit", produitRoute);
-/* app.use('/api/commandeExterne',commandeExterneRoutes);
-app.use('/api/facture',factureRoutes); */
+app.use("/api/commandeExterne", commandeExterneRoutes);
+app.use("/api/produitExterne", produitExterne);
 
 app.use((req, res, next) => {
   const error = new httperror("could not find that page", 404);

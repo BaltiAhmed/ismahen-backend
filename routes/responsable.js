@@ -28,5 +28,7 @@ check('password')
 .isLength({min:8})
 , reponsableControllers.login)
 
+route.get('/',reponsableControllers.getuser)
+
 
 module.exports = route

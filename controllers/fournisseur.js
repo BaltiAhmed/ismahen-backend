@@ -12,7 +12,7 @@ const signup = async (req, res, next) => {
     return next(new httpError("invalid input passed ", 422));
   }
 
-  const { name, email, password, tel, adresse } = req.body;
+  const { name, email, tel, adresse } = req.body;
   let existinguser;
   try {
     existinguser = await fournisseur.findOne({ email: email });
@@ -22,14 +22,13 @@ const signup = async (req, res, next) => {
   }
 
   if (existinguser) {
-    const error = new httpError("user exist", 422);
+    const error = new httpError("fournisseur exist", 422);
     return next(error);
   }
 
   const createduser = new fournisseur({
     name,
     email,
-    password,
     tel,
     adresse,
   });
@@ -41,21 +40,7 @@ const signup = async (req, res, next) => {
     return next(error);
   }
 
-  let token;
-  try {
-    token = jwt.sign(
-      { userId: createduser.id, email: createduser.email },
-      "secret-thinks",
-      { expiresIn: "1h" }
-    );
-  } catch (err) {
-    const error = new httpError("failed signup try again later", 500);
-    return next(error);
-  }
-
-  res
-    .status(201)
-    .json({ fournisseurId: createduser.id, email: createduser.email, token: token });
+  res.status(201).json({ fournisseur: createduser });
 };
 
 const login = async (req, res, next) => {
@@ -91,7 +76,7 @@ const login = async (req, res, next) => {
 const getfournisseur = async (req, res, next) => {
   let existingUser;
   try {
-    existingUser = await fournisseur.find({}, "-password");
+    existingUser = await fournisseur.find();
   } catch {
     const error = new httpError("failed signup try again later", 500);
     return next(error);
@@ -105,22 +90,20 @@ const updatefournisseur = async (req, res, next) => {
     return next(new httpError("invalid input passed ", 422));
   }
 
-  const { name, email, password, tel, adresse } = req.body;
+  const { name, email, tel, adresse } = req.body;
   const UserId = req.params.id;
   let existingUser;
   try {
-    existingUser = await user.findById(UserId);
+    existingUser = await fournisseur.findById(UserId);
   } catch {
     const error = new httpError("problem", 500);
     return next(error);
   }
 
-
   existingUser.name = name;
   existingUser.email = email;
-  existingUser.password = password;
-  existingUser.tel=tel
-  existingUser.adresse=adresse
+  existingUser.tel = tel;
+  existingUser.adresse = adresse;
 
   try {
     existingUser.save();
@@ -153,22 +136,20 @@ const deletefournisseur = async (req, res, next) => {
 };
 
 const getfournisseurById = async (req, res, next) => {
-    const userId = req.params.id;
-    let existingUser;
-    try {
-      existingUser = await fournisseur.findById(userId)
-    } catch {
-      const error = new httpError("failed signup try again later", 500);
-      return next(error);
-    }
-    res.json({ fournisseur: existingUser });
-  };
-  
-
+  const userId = req.params.id;
+  let existingUser;
+  try {
+    existingUser = await fournisseur.findById(userId);
+  } catch {
+    const error = new httpError("failed signup try again later", 500);
+    return next(error);
+  }
+  res.json({ fournisseur: existingUser });
+};
 
 exports.signup = signup;
 exports.login = login;
-exports.getfournisseur= getfournisseur;
+exports.getfournisseur = getfournisseur;
 exports.updatefournisseur = updatefournisseur;
 exports.deletefournisseur = deletefournisseur;
-exports.getfournisseurById=getfournisseurById
+exports.getfournisseurById = getfournisseurById;

@@ -10,6 +10,6 @@ route.post('/ajout',commandeExterneControllers.ajoutcommandeExterne)
 
 route.delete('/:id',commandeExterneControllers.deletecommandeExterne)
 route.patch('/:id',commandeExterneControllers.updatecommandeExterne)
-route.get('/:getcommandeExterne',commandeExterneControllers.getcommandeExterne)
+route.get('/',commandeExterneControllers.getcommandeExterne)
 
 module.exports = route;

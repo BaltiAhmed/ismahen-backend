@@ -5,7 +5,7 @@ const { validationResult } = require("express-validator");
 const jwt = require("jsonwebtoken");
 
 const commandeExterne = require("../models/commandeExterne");
-const fournisseur = require('../models/fournisseur');
+const fournisseur = require("../models/fournisseur");
 const magasinier = require("../models/magasinier");
 
 const ajoutcommandeExterne = async (req, res, next) => {
@@ -14,50 +14,58 @@ const ajoutcommandeExterne = async (req, res, next) => {
     return next(new httpError("invalid input passed ", 422));
   }
 
-  const { idProduit, idMagasinier} = req.body;
+  const { prix, founisseurId, magasinierId } = req.body;
 
-  let existingmagasinier
+  let existingmagasinier;
 
   try {
-    existingmagasinier = await magasinier.findById(idmagasinier);
+    existingmagasinier = await magasinier.findById(magasinierId);
   } catch {
     const error = new httpError("problem", 500);
     return next(error);
   }
 
-  console.log(existingmagasinier.commandeExterne)
+  let existingFouniseur;
+
+  try {
+    existingFouniseur = await fournisseur.findById(founisseurId);
+  } catch {
+    const error = new httpError("problem", 500);
+    return next(error);
+  }
 
   const d = new Date();
 
-  const createduser = new commandeExterne({
+  const createdCommandeExterne = new commandeExterne({
     date: d,
-    idProduit,
-    idMagasinier,
-    idFournisseur,
+    prix,
+    produits: [],
+    existingFouniseur,
+    existingmagasinier,
   });
 
   try {
-    await createduser.save();
-    await existingmagasinier.commandeExterne.push(createduser)
-    await existingmagasinier.save()
+    createdCommandeExterne.save();
+    existingmagasinier.commandeExterne.push(createdCommandeExterne);
+    existingmagasinier.save();
   } catch (err) {
-    const error = new httpError("failed signup", 500);
+    const error = new httpError("failed signup !!!!", 500);
     return next(error);
   }
   res.status(201).json({
-    commandeExterne: createduser,
+    commandeExterne: createdCommandeExterne,
   });
 };
 
 const getcommandeExterne = async (req, res, next) => {
-  let existingUser;
+  let existingCommandeExterne;
   try {
-    existingUser = await user.find({}, "-password");
+    existingCommandeExterne = await commandeExterne.find();
   } catch {
     const error = new httpError("failed signup try again later", 500);
     return next(error);
   }
-  res.json({ existingUser: existingUser });
+  res.json({ existingCommandeExterne: existingCommandeExterne });
 };
 
 const updatecommandeExterne = async (req, res, next) => {
@@ -66,7 +74,7 @@ const updatecommandeExterne = async (req, res, next) => {
     return next(new httpError("invalid input passed ", 422));
   }
 
-  const { idMagasinier, idProduit ,idFournisseur } = req.body;
+  const { idMagasinier, idProduit, idFournisseur } = req.body;
   const userId = req.params.userId;
   let existingUser;
   try {

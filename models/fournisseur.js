@@ -5,7 +5,6 @@ const schema = mongoose.Schema;
 const fournisseurSchema = new schema({
     name:{type:String,required:true},
     email:{type:String,required:true,unique:true},
-    password:{type:String,required:true,minlenght:8},
     tel:{type:String,required:true},
     adresse:{type:String,required:true}
     

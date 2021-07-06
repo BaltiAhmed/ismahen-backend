@@ -8,7 +8,8 @@ const magasinierSchema = new schema({
     password:{type:String,required:true,minlenght:8},
     tel:{type:String,required:true},
     adresse:{type:String,required:true},
-    produits:[{type:mongoose.Types.ObjectId,required:true,ref:'produit'}]
+    commandeExterne:[{type:mongoose.Types.ObjectId,required:true,ref:'commandeExterne'}],
+    commandeInterne:[{type:mongoose.Types.ObjectId,required:true,ref:'commande'}]
 
 })
 
