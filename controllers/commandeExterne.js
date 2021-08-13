@@ -40,8 +40,8 @@ const ajoutcommandeExterne = async (req, res, next) => {
     date: d,
     prix,
     produits: [],
-    existingFouniseur,
-    existingmagasinier,
+    founisseurId,
+    magasinierId,
   });
 
   try {

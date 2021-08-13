@@ -32,6 +32,6 @@ route.patch(
 );
 route.delete("/:id", fournisseurControllers.deletefournisseur);
 
-route.get("/getfournisseur/:id", fournisseurControllers.getfournisseurById);
+route.get("/:id", fournisseurControllers.getfournisseurById);
 
 module.exports = route;

@@ -53,4 +53,28 @@ const ajoutProduit = async (req, res, next) => {
   });
 };
 
+const getProduitByFactureId = async (req, res, next) => {
+  const id = req.params.id;
+
+  let existingProduit;
+  try {
+    existingProduit = await commandeExterne.findById(id).populate("produits");
+  } catch (err) {
+    const error = new httpError("Fetching failed", 500);
+    return next(error);
+  }
+
+  if (!existingProduit || existingProduit.produits.length === 0) {
+    return next(new httpError("could not find parents for this id.", 404));
+  }
+
+  res.json({
+    existingProduit: existingProduit.produits.map((item) =>
+      item.toObject({ getters: true })
+    ),
+  });
+};
+
+
 exports.ajoutProduit = ajoutProduit
+exports.getProduitByFactureId = getProduitByFactureId

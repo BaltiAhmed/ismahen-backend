@@ -44,7 +44,7 @@ check('email')
 
 route.delete('/:id',magasinierControllers.deletemagasinier)
 
-route.get('/magasinier/:id',magasinierControllers.getmagasinierById)
+route.get('/:id',magasinierControllers.getmagasinierById)
 
 
 module.exports = route
