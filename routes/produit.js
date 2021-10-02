@@ -11,5 +11,6 @@ route.post('/ajout',produitControllers.ajoutProduit)
 route.delete('/:id',produitControllers.deleteproduit)
 route.patch('/:id',produitControllers.updateproduit)
 route.get('/',produitControllers.getproduit)
+route.get('/:id',produitControllers.getproduitById)
 
 module.exports = route;

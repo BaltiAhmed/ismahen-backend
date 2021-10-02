@@ -32,6 +32,7 @@ const ajoutcommande = async (req, res, next) => {
     date: d,
     idProduit,
     idOuvrier,
+    finished:false
   });
 
   try {
@@ -50,7 +51,7 @@ const ajoutcommande = async (req, res, next) => {
 const getcommande = async (req, res, next) => {
   let existingUser;
   try {
-    existingUser = await user.find({}, "-password");
+    existingUser = await commande.find({}, "-password");
   } catch {
     const error = new httpError("failed signup try again later", 500);
     return next(error);
@@ -63,23 +64,19 @@ const updatecommande = async (req, res, next) => {
   if (!error.isEmpty()) {
     return next(new httpError("invalid input passed ", 422));
   }
-
-  const { idOuvrier, idProduit } = req.body;
-  const userId = req.params.userId;
+  const id = req.params.id;
   let existingUser;
   try {
-    existingUser = await commande.findById(userId);
+    existingUser = await commande.findById(id);
   } catch {
     const error = new httpError("problem", 500);
     return next(error);
   }
 
-  console.log(existingUser);
-  console.log(idProduit);
-  console.log(idOuvrier);
+  console.log(existingUser)
 
-  existingUser.idProduit = idProduit;
-  existingUser.idOuvrier = idOuvrier;
+  existingUser.finished = true;
+
 
   try {
     existingUser.save();
@@ -123,8 +120,33 @@ const getcommandeById = async (req, res, next) => {
   res.json({ commande: existingUser });
 };
 
+const getCommandeByOuvrierId = async (req, res, next) => {
+  const id = req.params.id;
+
+  console.log(id)
+
+  let existingUser;
+  try {
+    existingUser = await ouvrier.findById(id).populate("commande");
+  } catch (err) {
+    const error = new httpError("Fetching failed", 500);
+    return next(error);
+  }
+
+  if (!existingUser || existingUser.commande.length === 0) {
+    return next(new httpError("could not find parents for this id.", 404));
+  }
+
+  res.json({
+    commande: existingUser.commande.map((item) =>
+      item.toObject({ getters: true })
+    ),
+  });
+};
+
 exports.ajoutcommande = ajoutcommande;
 exports.getcommande = getcommande;
 exports.updatecommande = updatecommande;
 exports.deletecommande = deletecommande;
 exports.getcommandeById = getcommandeById;
+exports.getCommandeByOuvrierId = getCommandeByOuvrierId

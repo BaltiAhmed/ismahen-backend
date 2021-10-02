@@ -10,6 +10,7 @@ route.post('/ajout',commandeControllers.ajoutcommande)
 
 route.delete('/:id',commandeControllers.deletecommande)
 route.patch('/:id',commandeControllers.updatecommande)
-route.get('/:getcommande',commandeControllers.getcommande)
+route.get('/',commandeControllers.getcommande)
+route.get('/ouvrier/:id',commandeControllers.getCommandeByOuvrierId)
 
 module.exports = route;

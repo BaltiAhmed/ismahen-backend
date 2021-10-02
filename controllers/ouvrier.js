@@ -125,7 +125,7 @@ const login = async (req, res, next) => {
 const getouvrier = async (req, res, next) => {
   let existingUser;
   try {
-    existingUser = await ouvrier.find({}, "-password");
+    existingUser = await ouvrier.find();
   } catch {
     const error = new httpError("failed signup try again later", 500);
     return next(error);

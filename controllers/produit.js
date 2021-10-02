@@ -116,10 +116,10 @@ const deleteproduit = async (req, res, next) => {
 };
 
 const getproduitById = async (req, res, next) => {
-  const userId = req.params.id;
+  const id = req.params.id;
   let existingUser;
   try {
-    existingUser = await produit.findById(userId);
+    existingUser = await produit.findById(id);
   } catch {
     const error = new httpError("failed signup try again later", 500);
     return next(error);

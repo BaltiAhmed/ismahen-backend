@@ -6,6 +6,7 @@ const commandeSchema = new schema({
     date:{type:String,required:true},
     idProduit:{type:String,required:true},
     idOuvrier:{type:String,required:true},
+    finished:{type:Boolean,required:true},
     
 
 })
