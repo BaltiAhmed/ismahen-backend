@@ -18,6 +18,7 @@ const produitExterne = require("./routes/produit-externe");
 
 
 const produitRoute = require("./routes/produit");
+const pointageRoute = require("./routes/pointage");
 
 const httperror = require("./models/error");
 
@@ -44,6 +45,7 @@ app.use("/api/commande", commandeRoutes);
 app.use("/api/produit", produitRoute);
 app.use("/api/commandeExterne", commandeExterneRoutes);
 app.use("/api/produitExterne", produitExterne);
+app.use("/api/pointage", pointageRoute);
 
 app.use((req, res, next) => {
   const error = new httperror("could not find that page", 404);
