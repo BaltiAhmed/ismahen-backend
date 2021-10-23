@@ -14,4 +14,6 @@ route.post(
   pointageControllers.ajout
 );
 
+route.get('/ouvrier/:id',pointageControllers.getPointageByOuvrierId)
+
 module.exports = route;

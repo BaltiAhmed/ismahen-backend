@@ -44,4 +44,29 @@ const ajout = async (req, res, next) => {
   });
 };
 
+const getPointageByOuvrierId = async (req, res, next) => {
+  const id = req.params.id;
+
+  console.log(id)
+
+  let existingPointage;
+  try {
+    existingPointage = await ouvrier.findById(id).populate("pointage");
+  } catch (err) {
+    const error = new httpError("Fetching failed", 500);
+    return next(error);
+  }
+
+  if (!existingPointage || existingPointage.pointage.length === 0) {
+    return next(new httpError("could not find parents for this id.", 404));
+  }
+
+  res.json({
+    pointage: existingPointage.pointage.map((item) =>
+      item.toObject({ getters: true })
+    ),
+  });
+};
+
 exports.ajout = ajout;
+exports.getPointageByOuvrierId = getPointageByOuvrierId
